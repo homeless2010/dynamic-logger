@@ -1,5 +1,5 @@
-$.namespace("druid.lang");
-druid.lang = function () {
+$.namespace("dlog.lang");
+dlog.lang = function () {
     var LANG_EN = 0;
     var LANG_CN = 1;
     var lang = {
@@ -298,8 +298,8 @@ druid.lang = function () {
     function setText($obj) {
         var key = $obj.attr('langKey');
         if (typeof (lang[key]) != 'undefined') {
-            var text = lang[key][druid.lang.langNow];
-            $obj.text(lang[key][druid.lang.langNow]);
+            var text = lang[key][dlog.lang.langNow];
+            $obj.text(lang[key][dlog.lang.langNow]);
         } else {
             log('key [' + key + '] not found');
         }
@@ -308,7 +308,7 @@ druid.lang = function () {
     function setTitle($obj) {
         var key = $obj.attr('langKey');
         if (typeof (lang[key]) != 'undefined') {
-            var title = lang[key][druid.lang.langNow];
+            var title = lang[key][dlog.lang.langNow];
             $obj.attr('title', title);
         } else {
             log('key [' + key + '] not found');
@@ -339,8 +339,8 @@ druid.lang = function () {
 
             $(document).on('click', '.langSelector', function () {
                 var langSelected = $(this).attr('langNow');
-                druid.lang.setLangType(langSelected);
-                druid.lang.trigger();
+                dlog.lang.setLangType(langSelected);
+                dlog.lang.trigger();
                 return false;
             });
         },
