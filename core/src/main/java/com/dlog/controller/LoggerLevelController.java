@@ -34,7 +34,7 @@ public class LoggerLevelController {
     /**
      * 设置日志级别
      */
-    @PutMapping
+    @PostMapping
     public List<String> changeLoggerLevel(@RequestBody LoggerBean loggerBean) {
         String name = loggerBean.getName();
         LogLevel logLevel = LEVELS.getOrDefault(loggerBean.getLevel(), LogLevel.INFO);

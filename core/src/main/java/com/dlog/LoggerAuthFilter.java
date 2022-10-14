@@ -1,6 +1,8 @@
 package com.dlog;
 
-import com.dlog.util.*;
+import com.step.iot.util.IPAddress;
+import com.step.iot.util.IPRange;
+import com.step.iot.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,7 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @WebFilter("/dlog/*")
@@ -22,9 +25,8 @@ public class LoggerAuthFilter implements Filter {
     public static final String PARAM_NAME_DENY = "deny";
     public static final String PARAM_REMOTE_ADDR = "remoteAddress";
     public static final String PARAM_NAME_PATH = "path";
-    //    private static final Log LOG = LogFactory.getLog(LoggerAuthFilter.class);
     private String servletPath = "/dlog";
-    private String resourcePath = "support/http/resources";
+    private String resourcePath = "dlog";
 
     private ResourceHandler handler;
 
@@ -73,7 +75,7 @@ public class LoggerAuthFilter implements Filter {
             }
         } catch (Exception e) {
             String msg = "initParameter config error, allow : " + config.getInitParameter(PARAM_NAME_ALLOW);
-//            LOG.error(msg, e);
+            log.error(msg, e);
         }
 
         try {
@@ -93,7 +95,7 @@ public class LoggerAuthFilter implements Filter {
             }
         } catch (Exception e) {
             String msg = "initParameter config error, deny : " + config.getInitParameter(PARAM_NAME_DENY);
-//            LOG.error(msg, e);
+            log.error(msg, e);
         }
     }
 
@@ -109,6 +111,7 @@ public class LoggerAuthFilter implements Filter {
         }
         if (requestURI.equals(servletPath)) {
             httpResp.sendRedirect(httpReq.getRequestURI() + '/');
+            return;
         }
 
         handler.service(httpReq, httpResp, servletPath);

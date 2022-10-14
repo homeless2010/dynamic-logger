@@ -15,6 +15,8 @@
  */
 package com.dlog.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.security.MessageDigest;
@@ -24,6 +26,7 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
 
+@Slf4j
 public class Utils {
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
@@ -50,7 +53,7 @@ public class Utils {
             return null;
         }
 
-        InputStream in = null;
+         InputStream in = null;
         try {
             in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
             if (in == null) {
@@ -481,8 +484,7 @@ public class Utils {
         try {
             x.close();
         } catch (Exception e) {
-//            LOG.debug("close error", e);
-            //TODO
+            log.debug("close error", e);
         }
     }
 

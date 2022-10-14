@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+    <title>Logger Stat</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
+    <link href='css/bootstrap.min.css' rel="stylesheet"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script src="js/lang.js" type="text/javascript" charset="utf8"></script>
+    <script src="js/common.js" type="text/javascript" charset="utf8"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript" charset="utf8"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>
+                Logger Stat
+            <span class="pull-right" style="font-size: 16px; margin-right: 20px;">
+                <input type="text" id="name" style="margin-bottom: auto;" placeholder="请输入名称" class="refresh-seconds-select">
+                <a langkey="Search" class="btn btn-primary lang" href="javascript:dlog.logger.search();">Search</a>
+            </span>
+            </h3>
+            <table id="dataTable" class="table table-bordered table-striped responsive-utilities">
+                <thead>
+                <tr>
+                    <th width="50">N</th>
+                    <th><a id="th-name">name</a></th>
+                    <th><a id="th-configuredLevel" class="lang" langKey="configuredLevel">configuredLevel</a>
+                    </th>
+                    <th><a id="th-configuredLevelDesc" class="lang"
+                           langKey="configuredLevelDesc">configuredLevelDesc</a>
+                    </th>
+                    <th><a id="th-effectiveLevel" class="lang" langKey="effectiveLevel">effectiveLevel</a>
+                    </th>
+                    <th><a id="th-effectiveLevelDesc" class="lang" langKey="effectiveLevelDesc">effectiveLevelDesc</a>
+                    </th>
+                    <th><a id="th-operate" class="lang" langKey="operate">operate</a></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $.namespace("dlog.logger");
+    dlog.logger = function () {
+        return {
+            init: function () {
+                dlog.common.ajaxuri = '/logger/level/confs';
+                dlog.common.handleCallback = dlog.logger.handleAjaxResult;
+                dlog.common.ajaxRequestForBasicInfo();
+            },
+            settingLoggerLevel: function (name,ele) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/logger/level',
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify({
+                        name: name,
+                        level: ele.previousElementSibling.options[ele.previousElementSibling.options.selectedIndex].value
+                    }),
+                    success: function (data) {
+                        // console.log(data)
+                        // console.log(ele.parentNode.parentNode)
+                        // console.log(ele.parentNode.parentNode.children)
+                        // console.log(ele.parentNode.parentNode.childNodes)
+                        // for(let i = 2,len = ele.parentNode.parentNode.childNodes.length - 1;i < len;i++){
+                        //     ele.parentNode.parentNode.childNodes[i].innerHTML = ""
+                        // }
+                        //FIXME
+                        dlog.logger.search();
+                    },
+                    dataType: "json"
+                });
+            },
+            search: function () {
+                dlog.common.ajaxRequestForBasicInfo({name: $("#name").val()});
+            },
+            handleAjaxResult: function (data) {
+                var logStatList = data;
+                if (logStatList == null) return;
+
+                var logStatTable = document.getElementById("dataTable");
+                while (logStatTable.rows.length > 1) {
+                    logStatTable.deleteRow(1);
+                }
+
+                var html = "";
+                for (var i = 0; i < logStatList.length; i++) {
+                    var stat = logStatList[i];
+                    html += "<tr>";
+                    html += "<td>" + (i + 1) + "</td>";
+                    html += "<td>" + '<p title="' + stat.name + '">' + dlog.common.subLogString(stat.name, 100) + '</p>' + "</td>";
+                    html += "<td>" + replace(stat.configuredLevel) + "</td>";
+                    html += "<td>" + replace(stat.configuredLevelDesc) + "</td>";
+                    html += "<td>" + replace(stat.effectiveLevel) + "</td>";
+                    html += "<td>" + replace(stat.effectiveLevelDesc) + "</td>";
+                    html += "<td><select style=\"width:90px;\" class=\"refresh-seconds-select btn\">" +
+                        "<option value=\"trace\">TRACE</option>" +
+                        "<option value=\"debug\">DEBUG</option>" +
+                        "<option value=\"info\">INFO</option>" +
+                        "<option value=\"warn\">WARN</option>" +
+                        "<option value=\"error\">ERROR</option>" +
+                        "<option value=\"fatal\">FATAL</option>" +
+                        "<option value=\"off\">OFF</option>" +
+                        "</select>" +
+                        "<a class=\"btn btn-primary lang\" style='margin-left: 5px;' langkey='setting' href=\"javascript:void(0);\" onclick=\"javascript:dlog.logger.settingLoggerLevel('" + stat.name + "'  , this);\">setting</a>" +
+                        "</td>";
+                    html += "</tr>";
+                }
+                $("#dataTable tbody").html(html);
+                dlog.common.stripes();
+            }
+        }
+    }();
+
+    $(document).ready(function () {
+        dlog.logger.init();
+    });
+</script>
+</body>
+</html>

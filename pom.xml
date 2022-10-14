@@ -5,6 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
+        <module>dynamic-log-spring-boot-starter</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
