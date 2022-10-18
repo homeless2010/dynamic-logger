@@ -1,13 +1,15 @@
 package com.dlog.controller;
 
-import com.dlog.bean.LoggerBean;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.logging.LoggingApplicationListener;
 import org.springframework.boot.logging.*;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,9 +17,8 @@ import java.util.stream.Stream;
 
 @Slf4j
 @RequestMapping("/logger/level")
-@RestController
 @RequiredArgsConstructor
-public class LoggerLevelController {
+public class LoggerLevelController implements BaseController{
     private static final Map<String, LogLevel> LEVELS = new HashMap<>();
 
     static {
