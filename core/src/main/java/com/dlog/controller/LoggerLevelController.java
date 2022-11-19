@@ -1,6 +1,6 @@
 package com.dlog.controller;
 
-import com.dlog.bean.LoggerBean;
+import com.step.dlog.bean.LoggerBean;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

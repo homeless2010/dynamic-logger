@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dlog.util;
+package com.step.dlog.util;
 
 /**
  * Interface for components that can match source strings against a specified pattern string.

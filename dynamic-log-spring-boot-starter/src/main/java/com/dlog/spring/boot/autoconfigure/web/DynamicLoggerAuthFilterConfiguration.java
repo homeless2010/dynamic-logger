@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dlog.spring.boot.autoconfigure.web;
+package com.step.dlog.spring.boot.autoconfigure.web;
 
-import com.dlog.LoggerAuthFilter;
-import com.dlog.spring.boot.autoconfigure.properties.DynamicLoggerProperties;
+import com.step.dlog.LoggerAuthFilter;
+import com.step.dlog.spring.boot.autoconfigure.properties.DynamicLoggerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
 @ConditionalOnWebApplication
 public class DynamicLoggerAuthFilterConfiguration {
-    private static final String DEFAULT_ALLOW_IP = "127.0.0.1";
+//    private static final String DEFAULT_ALLOW_IP = "127.0.0.1";
 
     @Bean
     public FilterRegistrationBean webStatFilterRegistrationBean(DynamicLoggerProperties properties) {
@@ -35,7 +35,7 @@ public class DynamicLoggerAuthFilterConfiguration {
         if (config.getAllow() != null) {
             registrationBean.addInitParameter("allow", config.getAllow());
         } else {
-            registrationBean.addInitParameter("allow", DEFAULT_ALLOW_IP);
+//            registrationBean.addInitParameter("allow", DEFAULT_ALLOW_IP);
         }
         if (config.getDeny() != null) {
             registrationBean.addInitParameter("deny", config.getDeny());

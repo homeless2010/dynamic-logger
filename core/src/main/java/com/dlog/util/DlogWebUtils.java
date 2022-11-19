@@ -1,8 +1,12 @@
-package com.dlog.util;
+package com.step.dlog.util;
+
+import com.google.gson.Gson;
 
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 public class DlogWebUtils {
     public static String getRemoteAddr(HttpServletRequest request) {
@@ -88,5 +92,22 @@ public class DlogWebUtils {
             return Boolean.FALSE;
         }
         return null;
+    }
+
+    public static String getJsonParamString(HttpServletRequest request) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = null;
+        try {
+            reader = request.getReader();
+
+            char[] buff = new char[1024];
+            int len;
+            while ((len = reader.read(buff)) != -1) {
+                sb.append(buff, 0, len);
+            }
+        } catch (IOException e) {
+            throw e;
+        }
+        return sb.toString();
     }
 }

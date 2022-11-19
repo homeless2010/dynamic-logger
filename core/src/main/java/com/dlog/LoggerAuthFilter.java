@@ -1,22 +1,23 @@
 package com.dlog;
 
-import com.dlog.util.IPAddress;
-import com.dlog.util.IPRange;
-import com.dlog.util.Utils;
+import com.google.gson.Gson;
+import com.step.dlog.service.LoggerService;
+import com.step.dlog.util.DlogWebUtils;
+import com.step.dlog.util.IPAddress;
+import com.step.dlog.util.IPRange;
+import com.step.dlog.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
-@WebFilter("/dlog/*")
 public class LoggerAuthFilter implements Filter {
     public static final String SESSION_USER_KEY = "dlog-user";
     public static final String PARAM_NAME_USERNAME = "loginUsername";
@@ -29,6 +30,8 @@ public class LoggerAuthFilter implements Filter {
     private String resourcePath = "dlog";
 
     private ResourceHandler handler;
+
+    private LoggerService loggerService = LoggerService.getInstance();
 
     @Override
     public void init(FilterConfig config) throws ServletException {
@@ -114,12 +117,22 @@ public class LoggerAuthFilter implements Filter {
             return;
         }
 
-        handler.service(httpReq, httpResp, servletPath);
+        handler.service(httpReq, httpResp, servletPath, new ProcessCallback() {
+            @Override
+            public String process(String url, Map<String, String> param) {
+                return loggerService.service(url, param);
+            }
+        });
     }
 
     @Override
     public void destroy() {
     }
+
+    public static interface ProcessCallback {
+        String process(String url, Map<String, String> data);
+    }
+
 
     public static class ResourceHandler {
         protected String username;
@@ -235,7 +248,7 @@ public class LoggerAuthFilter implements Filter {
             return true;
         }
 
-        public void service(HttpServletRequest request, HttpServletResponse response, String servletPath) throws ServletException, IOException {
+        public void service(HttpServletRequest request, HttpServletResponse response, String servletPath, ProcessCallback processCallback) throws ServletException, IOException {
             String contextPath = request.getContextPath();
             String requestURI = request.getRequestURI();
 
@@ -286,6 +299,23 @@ public class LoggerAuthFilter implements Filter {
 
             if ("".equals(path) || "/".equals(path)) {
                 returnResourceFile("/index.html", uri, response);
+                return;
+            }
+            if (path.contains(".json")) {
+//                String fullUrl = path;
+//                if (request.getQueryString() != null && request.getQueryString().length() > 0) {
+//                    fullUrl += "?" + request.getQueryString();
+//                }
+                Map<String, String[]> parameterMap = request.getParameterMap();
+                Gson gson = new Gson();
+                Map<String, String> postData = gson.fromJson(DlogWebUtils.getJsonParamString(request), Map.class);
+                Map<String, String> getData = parameterMap.entrySet().stream().map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue() != null && e.getValue().length > 0 ? e.getValue()[0] : null)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                Map<String, String> data = new HashMap<>();
+                data.putAll(getData);
+                if (postData != null) {
+                    data.putAll(postData);
+                }
+                response.getWriter().print(processCallback.process(path, data));
                 return;
             }
             returnResourceFile(path, uri, response);

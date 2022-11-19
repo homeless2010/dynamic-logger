@@ -1,4 +1,4 @@
-package com.dlog.controller;
+package com.step.dlog.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
